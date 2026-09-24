@@ -69,14 +69,41 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       : await stmt.all();
 
     // Fetch photos for each destination and construct full URLs
+    interface DestinationRecord {
+      id: string;
+      name_en: string;
+      name_cs: string;
+      description_en: string;
+      description_cs: string;
+      lat: number;
+      lng: number;
+      continent: string;
+      visited_at_year: number;
+      visited_from: string | null;
+      visited_to: string | null;
+      created_at: string;
+      updated_at: string;
+    }
+    interface PhotoRecord {
+      id: string;
+      destination_id: string;
+      full_url: string;
+      thumb_url: string;
+      blur_url: string | null;
+      caption_en: string | null;
+      caption_cs: string | null;
+      sort_order: number;
+      is_visible: number;
+      created_at: string;
+    }
     const destinationsWithPhotos = await Promise.all(
-      (destinations.results as any[]).map(async (dest) => {
+      (destinations.results as DestinationRecord[]).map(async (dest) => {
         const photos = await env.DB.prepare(
           'SELECT * FROM photos WHERE destination_id = ? AND is_visible = 1 ORDER BY sort_order ASC'
         ).bind(dest.id).all();
 
         // Convert R2 keys to full URLs
-        const photosWithUrls = (photos.results as any[]).map((photo) => ({
+        const photosWithUrls = (photos.results as PhotoRecord[]).map((photo) => ({
           ...photo,
           full_url: `/api/images/${photo.full_url}`,
           thumb_url: `/api/images/${photo.thumb_url}`,

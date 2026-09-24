@@ -20,13 +20,6 @@ interface UpdatePhotoInput {
 }
 
 /**
- * Check if a URL is stored as a data URL (not an R2 key)
- */
-function isDataUrl(url: string | null | undefined): boolean {
-  return typeof url === 'string' && url.startsWith('data:');
-}
-
-/**
  * Check if a URL is an R2 key (not a data URL)
  */
 function isR2Key(url: string | null | undefined): boolean {
@@ -182,7 +175,12 @@ export const onRequestDelete: PagesFunction<Env> = async ({ params, env }) => {
       );
     }
 
-    const photoData = photo as any;
+    interface PhotoRecord {
+      full_url: string | null;
+      thumb_url: string | null;
+      blur_url: string | null;
+    }
+    const photoData = photo as PhotoRecord;
 
     // Delete from R2 (only actual R2 keys, not data URLs)
     const r2Deletions: Promise<void>[] = [];

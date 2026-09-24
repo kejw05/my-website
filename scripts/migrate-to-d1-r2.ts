@@ -340,7 +340,7 @@ async function insertDataToD1(options: MigrationOptions) {
   
   try {
     // Generate SQL statements using parameterized queries
-    const statements: Array<{ sql: string; params: any[] }> = [];
+    const statements: Array<{ sql: string; params: (string | number | null)[] }> = [];
     
     // Clear existing data
     statements.push({ sql: 'DELETE FROM photos', params: [] });

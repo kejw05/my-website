@@ -9,3 +9,10 @@ dist
 
 # Generated files
 migrations/seed.sql
+tmp/
+
+# Test artifacts
+coverage/
+test-results/
+playwright-report/
+.playwright/

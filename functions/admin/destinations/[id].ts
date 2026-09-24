@@ -262,7 +262,12 @@ export const onRequestDelete: PagesFunction<Env> = async ({ params, env }) => {
 
     // Delete photos from R2
     const r2Deletions: Promise<void>[] = [];
-    for (const photo of photos.results as any[]) {
+    interface PhotoRecord {
+      full_url: string | null;
+      thumb_url: string | null;
+      blur_url: string | null;
+    }
+    for (const photo of photos.results as PhotoRecord[]) {
       // Only attempt R2 deletion for URLs that are R2 keys (not data URLs)
       if (photo.full_url && !photo.full_url.startsWith('data:')) {
         r2Deletions.push(

@@ -10,6 +10,13 @@ Personal travel photography website with dynamic photo management powered by Clo
 - **Storage:** Cloudflare R2 (object storage for photos)
 - **Deployment:** Cloudflare Pages (unified frontend + API)
 
+## Documentation
+
+- 📘 **[Testing Guide](./docs/TESTING.md)** — How to run and write tests
+- 🚀 **[Deployment Guide](./docs/DEPLOYMENT.md)** — Deployment procedures and CI/CD
+- 🔄 **[Rollback Plan](./docs/ROLLBACK_PLAN.md)** — Emergency rollback procedures
+- 🔐 **[Admin API](./ADMIN_API.md)** — Admin endpoints documentation
+
 ## Local Development
 
 ### Prerequisites
@@ -75,8 +82,41 @@ Personal travel photography website with dynamic photo management powered by Clo
 | `npm run migrate:prod` | Migrate photos to R2 and data to D1 (production) |
 | `npm run migrate:prod:dry` | Dry-run production migration |
 | `npm run lint` | Run ESLint |
+| `npm test` | Run all tests (API + E2E) |
+| `npm run test:api` | Run API integration tests via `scripts/test-server.sh` |
+| `npm run test:api:watch` | Run API tests in watch mode |
+| `npm run test:coverage` | Run API tests with coverage reporting |
+| `npm run test:e2e` | Run E2E smoke tests |
+| `npm run test:e2e:ui` | Run E2E tests with UI |
 
 **For migration details, see [docs/MIGRATION_GUIDE.md](./docs/MIGRATION_GUIDE.md)**
+
+## Testing
+
+This project includes comprehensive testing:
+
+- **API Integration Tests** — Vitest against local Wrangler Pages dev
+- **E2E Smoke Tests** — Playwright for critical user flows
+
+```bash
+# Run all tests
+npm test
+
+# Run API tests only
+npm run test:api
+
+# Run API coverage
+npm run test:coverage
+
+# Run E2E tests only
+npm run test:e2e
+
+# Interactive test UI
+npm run test:api:ui
+npm run test:e2e:ui
+```
+
+See [docs/TESTING.md](./docs/TESTING.md) for detailed testing guide.
 
 ## Database Schema
 

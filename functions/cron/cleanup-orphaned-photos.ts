@@ -31,7 +31,7 @@ interface Env {
 }
 
 export default {
-  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+  async scheduled(event: ScheduledEvent, env: Env): Promise<void> {
     console.log('Starting orphaned photos cleanup job');
     
     const ONE_HOUR_MS = 60 * 60 * 1000;

@@ -191,27 +191,29 @@ async function verifyApiKey(request: Request, expectedKey: string): Promise<bool
   const tokenBytes = encoder.encode(token);
   const expectedBytes = encoder.encode(expectedKey);
   
+  const subtleWithTimingSafeEqual = crypto.subtle as SubtleCrypto & {
+    timingSafeEqual?: (a: BufferSource, b: BufferSource) => Promise<boolean>;
+  };
+
   try {
-    // Pad both inputs to same fixed size for constant-time comparison
-    // This prevents timing leaks from both length differences and content comparison
-    const maxLen = Math.max(tokenBytes.length, expectedBytes.length);
-    const paddedToken = new Uint8Array(maxLen);
-    const paddedExpected = new Uint8Array(maxLen);
-    
-    paddedToken.set(tokenBytes);
-    paddedExpected.set(expectedBytes);
-    
-    // timingSafeEqual runs in constant time when arrays are same length
-    // IMPORTANT: We must await the result, otherwise the timing difference is still detectable
-    const isEqual = await crypto.subtle.timingSafeEqual(paddedToken, paddedExpected);
-    
-    // Check if original lengths matched (still constant-time since we already did the comparison)
-    // This works because timingSafeEqual already executed in constant time above
-    return isEqual && tokenBytes.length === expectedBytes.length;
+    if (typeof subtleWithTimingSafeEqual.timingSafeEqual === 'function') {
+      // Pad both inputs to same fixed size for constant-time comparison
+      // This prevents timing leaks from both length differences and content comparison
+      const maxLen = Math.max(tokenBytes.length, expectedBytes.length);
+      const paddedToken = new Uint8Array(maxLen);
+      const paddedExpected = new Uint8Array(maxLen);
+
+      paddedToken.set(tokenBytes);
+      paddedExpected.set(expectedBytes);
+
+      const isEqual = await subtleWithTimingSafeEqual.timingSafeEqual(paddedToken, paddedExpected);
+      return isEqual && tokenBytes.length === expectedBytes.length;
+    }
   } catch {
-    // Fallback if timingSafeEqual not available (shouldn't happen in modern Workers)
-    return false;
+    // Fall through to the string comparison below.
   }
+
+  return token === expectedKey;
 }
 
 /**

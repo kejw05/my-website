@@ -1,4 +1,5 @@
--- Migration: Add visited_at_year column to destinations
--- Adds the missing column that was introduced in the updated initial schema
+-- Migration: Add visited_at_year column to destinations (DEPRECATED - column already exists in 0001)
+-- This migration is a no-op because visited_at_year was already added in 0001_initial_schema.sql
+-- Keeping this file for migration history consistency, but it does nothing.
 
-ALTER TABLE destinations ADD COLUMN visited_at_year INTEGER NOT NULL DEFAULT 0;
+-- No changes needed - column already exists from initial schema

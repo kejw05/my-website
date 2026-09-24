@@ -15,14 +15,6 @@
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-interface UploadPhotoInput {
-  destination_id: string;
-  caption_en?: string;
-  caption_cs?: string;
-  sort_order?: number;
-  is_visible?: boolean;
-}
-
 /**
  * Generate a simple blur placeholder (10x10 px base64-encoded image)
  * In production, use a proper image processing library
@@ -44,8 +36,7 @@ function generateBlurPlaceholder(): string {
  * For now: we'll accept pre-processed images or process with basic canvas resizing
  */
 async function processImage(
-  imageData: ArrayBuffer,
-  filename: string
+  imageData: ArrayBuffer
 ): Promise<{
   full: ArrayBuffer;
   thumb: ArrayBuffer;
@@ -181,7 +172,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const ext = imageFile.name.split('.').pop() || 'jpg';
 
     // Process image (generate full, thumb, blur variants)
-    const processed = await processImage(imageFile.data, imageFile.name);
+    const processed = await processImage(imageFile.data);
 
     // Generate R2 keys WITHOUT leading slash (to match /api/images/[key].ts route)
     const fullKey = `${destination_id}/${photoId}.${ext}`;

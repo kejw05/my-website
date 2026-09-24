@@ -37,6 +37,7 @@ export default function TravelModal({ place, onClose }: Props) {
 
   // Reset index when place changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveIndex(0);
     setLoaded(false);
   }, [place.id]);
