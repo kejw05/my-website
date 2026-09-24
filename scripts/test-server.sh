@@ -9,6 +9,7 @@ PERSIST_DIR="${WRANGLER_PERSIST_DIR:-.wrangler/state}"
 TEST_ADMIN_API_KEY="${TEST_ADMIN_API_KEY:-test-key-for-local-dev-123}"
 ADMIN_API_KEY_VALUE="${ADMIN_API_KEY:-$TEST_ADMIN_API_KEY}"
 export ADMIN_API_KEY="${ADMIN_API_KEY_VALUE}"
+GENERATED_SEED_PATH="${GENERATED_SEED_PATH:-tmp/seed.sql}"
 WRANGLER_PID=""
 DEV_VARS_FILE="$(mktemp -t my-website-dev-vars.XXXXXX)"
 
@@ -58,7 +59,9 @@ echo "Setting up test database..."
 npm run db:migrate:local
 
 echo "Seeding test database..."
-npm run db:seed:local
+mkdir -p "$(dirname "${GENERATED_SEED_PATH}")"
+npx tsx scripts/generate-seed.ts > "${GENERATED_SEED_PATH}"
+npx wrangler d1 execute my-website-db --local --persist-to "${PERSIST_DIR}" --file="${GENERATED_SEED_PATH}"
 
 cat > "${DEV_VARS_FILE}" <<EOF
 ADMIN_API_KEY=${ADMIN_API_KEY:-$TEST_ADMIN_API_KEY}
