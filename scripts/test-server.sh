@@ -7,6 +7,8 @@ set -euo pipefail
 PORT="${PORT:-${TEST_API_PORT:-8788}}"
 PERSIST_DIR="${WRANGLER_PERSIST_DIR:-.wrangler/state}"
 TEST_ADMIN_API_KEY="${TEST_ADMIN_API_KEY:-test-key-for-local-dev-123}"
+ADMIN_API_KEY_VALUE="${ADMIN_API_KEY:-$TEST_ADMIN_API_KEY}"
+export ADMIN_API_KEY="${ADMIN_API_KEY_VALUE}"
 WRANGLER_PID=""
 DEV_VARS_FILE="$(mktemp -t my-website-dev-vars.XXXXXX)"
 
@@ -64,7 +66,7 @@ EOF
 
 # Start wrangler dev in background
 echo "Starting Wrangler dev server on port ${PORT} with test ADMIN_API_KEY..."
-npx wrangler pages dev dist \
+ADMIN_API_KEY="${ADMIN_API_KEY_VALUE}" npx wrangler pages dev dist \
   --d1 DB=my-website-db \
   --r2 PHOTOS=my-website-photos \
   --binding "ADMIN_API_KEY=${ADMIN_API_KEY:-$TEST_ADMIN_API_KEY}" \
